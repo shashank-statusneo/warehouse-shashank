@@ -22,7 +22,7 @@ def get_app(config):
     app.config.update(config)
     app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=settings.TOKEN_EXPIRE_IN)
-    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(minutes=settings.TOKEN_EXPIRE_IN)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
     CORS(app)
     db.init_app(app)
     jwt.init_app(app)
