@@ -30,8 +30,8 @@ class BulkBenchmarkProductivityValidator(Schema):
 
 class UpdateOnlyFieldBenchmarkProductivity(Schema):
     id = fields.Float(required=True)
-    productivity_experienced_employee = fields.Float(required=False)
-    productivity_new_employee = fields.Float(required=False)
+    productivity_experienced_employee = fields.Float(required=False, validate=Range(min=0))
+    productivity_new_employee = fields.Float(required=False, validate=Range(min=0))
 
 
 class UpdateBenchmarkProductivityValidator(Schema):
@@ -42,7 +42,7 @@ class DemandValidator(Schema):
     warehouse_id = fields.Integer(required=True)
     category_id = fields.Integer(required=True)
     date = fields.Date(required=True, validate=greater_or_equal_to_current_date)
-    demand = fields.Integer(required=True)
+    demand = fields.Integer(required=True, validate=Range(min=0))
 
 
 class BulkDemandValidator(Schema):
@@ -51,7 +51,7 @@ class BulkDemandValidator(Schema):
 
 class UpdateOnlyFieldDemand(Schema):
     id = fields.Integer(required=True)
-    demand = fields.Integer(required=False)
+    demand = fields.Integer(required=False, validate=Range(min=0))
 
 
 class UpdateDemandValidator(Schema):

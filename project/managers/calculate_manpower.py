@@ -6,6 +6,7 @@ from project.managers import (
     RequirementManager,
     ResultManager
 )
+from project.models.warehouse import Category
 
 
 class WarehouseManpowerPlanner:
@@ -49,6 +50,7 @@ class WarehouseManpowerPlanner:
     @staticmethod
     def get_dummy_output(requirement_data):
         # dummy_output = {"total": dict(), "additional_data": dict()}
+        category_name_to_id_mapping = Category.category_name_to_id_mapping()
         dummy_output = {}
         for date in requirement_data["expected_demand"]:
             if date == "extra" or date == "total":
@@ -63,6 +65,7 @@ class WarehouseManpowerPlanner:
                 dummy_output[date][category] = {
                     "num_of_existing_to_deploy": existing,
                     "num_of_new_to_deploy": new,
+                    "category_id": category_name_to_id_mapping[category],
                     "total": existing + new
                 }
 

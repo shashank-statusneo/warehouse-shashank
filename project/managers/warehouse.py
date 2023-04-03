@@ -87,7 +87,25 @@ class CategoryManager:
 
     @classmethod
     def convert_excel_file_data_according_category(cls, data):
-        return [{"name": p["category"], "description": p["category"]} for p in data]
+        category_data, error_data = [], []
+        for record in data:
+            try:
+                if isinstance(record["productivity_experienced_employee"], float):
+                    decimal_part = str(record["productivity_experienced_employee"]).split('.')[1]
+                    if decimal_part != "0":
+                        raise
+
+                if isinstance(record["productivity_new_employee"], float):
+                    decimal_part = str(record["productivity_new_employee"]).split('.')[1]
+                    if decimal_part != "0":
+                        raise
+                int(record["productivity_experienced_employee"])
+                int(record["productivity_new_employee"])
+                category_data.append({"name": record["category"], "description": record["category"]})
+            except Exception:
+                error_data.append(f"Invalid value(s) for : {record['category']}")
+
+        return category_data, error_data
 
     @staticmethod
     def check_invalid_categories(categories: list) -> list[Any]:

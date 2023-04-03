@@ -94,7 +94,7 @@ def update_benchmark_productivity():
         return jsonify(err.messages), 400
 
     BenchmarkProductivityManager.update_benchmark_productivity(data["productivity"])
-    return make_response("OK", 200)
+    return jsonify(status="success"), 200
 
 
 @warehouse.route('/demands', methods=['POST'])
@@ -132,7 +132,7 @@ def update_demand():
         return jsonify(err.messages), 400
 
     DemandManager.update_demand(data["demands"])
-    return make_response("OK", 200)
+    return jsonify(status="success"), 200
 
 
 @warehouse.route('/requirement/<warehouse_id>', methods=['GET'])
@@ -187,7 +187,10 @@ def upload_productivity_excel(warehouse_id: int):
 
     data = df.to_json(orient='records')
     data = json.loads(data)
-    category_data = CategoryManager.convert_excel_file_data_according_category(data)
+    category_data, error = CategoryManager.convert_excel_file_data_according_category(data)
+    if error:
+        return jsonify(error=error), 400
+
     CategoryManager.add_bulk_category(category_data)
     BenchmarkProductivityManager.add_benchmark_category_from_excel_file_data(data, warehouse_id)
 

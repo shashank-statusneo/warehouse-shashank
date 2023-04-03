@@ -68,6 +68,7 @@ class DemandManager:
                 "id": record.InputDemand.id,
                 "demand": record.InputDemand.demand,
                 "created_on": record.InputDemand.created_on,
+                "category_id": record.Category.id,
                 "updated_on": record.InputDemand.updated_on
             }
             output[str_date]["total"] = output[str_date].get("total", 0) + record.InputDemand.demand
