@@ -40,14 +40,7 @@ class WarehouseManager:
 
     @classmethod
     def get_warehouse_by_id(cls, warehouse_id: int):
-        warehouse = Warehouse.query.filter_by(id=warehouse_id).first()
-        if warehouse:
-            return {
-                "id": warehouse.id,
-                "name": warehouse.name,
-                "description": warehouse.description
-            }
-        return None
+        return Warehouse.query.filter_by(id=warehouse_id).first()
 
 
 class CategoryManager:

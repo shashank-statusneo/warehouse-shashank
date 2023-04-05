@@ -1,10 +1,11 @@
-from random import randint
+from random import randint, random
 
 from project.managers import (
     DemandManager,
     BenchmarkProductivityManager,
     RequirementManager,
-    ResultManager
+    ResultManager,
+    WarehouseManager,
 )
 from project.models.warehouse import Category
 
@@ -28,13 +29,7 @@ class WarehouseManpowerPlanner:
 
         result = cls.get_dummy_output(requirement_data)
         ResultManager.add_bulk_results(new_requirement.id, result)
-        demand_vs_fulfillment_data = [
-            {
-                "date": key,
-                "demand": value["total"],
-                "expectedFulfillmentQty": value["total"] - randint(-250, 250)}
-            for key, value in expected_demand.items() if key != "total"
-        ]
+
         additional_data = {
             "project_fulfillment": randint(80, 96),
             "total_hiring_budget": requirement_data["total_hiring_budget"] - randint(100, 1000)
@@ -43,13 +38,13 @@ class WarehouseManpowerPlanner:
             "input_data": requirement_data,
             "requirement_id": new_requirement.id,
             "output": result,
-            "demand_vs_fulfillment_data": demand_vs_fulfillment_data,
-            "additional_data": additional_data
+            "demand_vs_fulfillment_data": cls.get_demand_vs_fulfillment_dummy_data(requirement_data),
+            "additional_data": additional_data,
+            "warehouse_name": WarehouseManager.get_warehouse_by_id(new_requirement.warehouse_id).name
         }
 
     @staticmethod
     def get_dummy_output(requirement_data):
-        # dummy_output = {"total": dict(), "additional_data": dict()}
         category_name_to_id_mapping = Category.category_name_to_id_mapping()
         dummy_output = {}
         for date in requirement_data["expected_demand"]:
@@ -69,18 +64,33 @@ class WarehouseManpowerPlanner:
                     "total": existing + new
                 }
 
-        #         dummy_output["total"]["num_of_existing_to_deploy"] = dummy_output["total"].get(
-        #             "num_of_existing_to_deploy", 0) + existing
-        #         dummy_output["total"]["num_of_new_to_deploy"] = dummy_output["total"].get(
-        #             "num_of_new_to_deploy", 0) + new
-        #         dummy_output["total"]["total"] = dummy_output["total"].get("total", 0) + new + existing
-        #
-        # if dummy_output["total"].get("num_of_new_to_deploy"):
-        #     dummy_output["additional_data"]["additional_employee_required"] = \
-        #         dummy_output["total"].get("num_of_new_to_deploy")
-        #     dummy_output["additional_data"]["total_hiring_budget"] = \
-        #         randint(requirement_data["total_hiring_budget"] - 10000, requirement_data["total_hiring_budget"])
-        #     dummy_output["additional_data"]["project_fulfillment"] = randint(80, 99)
-        #     dummy_output["additional_data"]["graph_data"] = []
+        return dummy_output
+
+    @staticmethod
+    def get_demand_vs_fulfillment_dummy_data(requirement_data):
+        category_name_to_id_mapping = Category.category_name_to_id_mapping()
+        dummy_output = {}
+        for date in requirement_data["expected_demand"]:
+            if date == "extra" or date == "total":
+                continue
+            if date not in dummy_output:
+                dummy_output[date] = dict()
+            for category in requirement_data["expected_demand"][date]:
+                if category == "total":
+                    dummy_output[date][category] = {
+                        "expected_demand": requirement_data["expected_demand"][date][category],
+                        "fulfillment_with_current": int(requirement_data["expected_demand"][date][category] * random()),
+                        "fulfillment_with_total": requirement_data["expected_demand"][date][category] + randint(-250, 250)
+                    }
+                else:
+                    dummy_output[date][category] = {
+                        "expected_demand": requirement_data["expected_demand"][date][category]["demand"],
+                        "fulfillment_with_current":
+                            int(requirement_data["expected_demand"][date][category]["demand"] * random()),
+                        "fulfillment_with_total":
+                            requirement_data["expected_demand"][date][category]["demand"] + randint(-50, 60),
+                        "category_id": category_name_to_id_mapping[category],
+                    }
 
         return dummy_output
+
