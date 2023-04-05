@@ -21,6 +21,20 @@ class AuthManager:
         return None
 
     @classmethod
+    def get_current_user_profile(cls):
+        identity = get_jwt_identity()
+        user = User.query.filter_by(id=identity["user_id"]).first()
+        return {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "username": user.username,
+            "gender": user.gender,
+            "address": user.address,
+            "mobile_number": user.mobile_number
+        }
+
+    @classmethod
     def create_new_user(cls, user_data):
         error_data = {}
         user_by_email = User.query.filter_by(email=user_data["email"]).first()
@@ -38,7 +52,8 @@ class AuthManager:
 
     @classmethod
     def update_user_profile(cls, user_data):
-        user = User.query.filter_by(email=user_data["email"]).first()
+        identity = get_jwt_identity()
+        user = User.query.filter_by(id=identity["user_id"]).first()
         update_model_object(user, user_data)
         db.session.commit()
 

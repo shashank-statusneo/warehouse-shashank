@@ -1,6 +1,6 @@
 import settings
 from project import db, jwt
-from project.schema_validators.auth import SignUpSchema, LogInSchema
+from project.schema_validators.auth import SignUpSchema, LogInSchema, UpdateProfile
 from flask import Blueprint
 from project.models.auth import User, TokenBlocklist
 
@@ -60,6 +60,21 @@ def refresh():
     access_token = create_access_token(identity=identity)
     return jsonify(access_token=access_token, expire_in=60 * settings.TOKEN_EXPIRE_IN)
 
+
+@auth_router.route('/profile', methods=['GET', 'PUT'])
+@jwt_required()
+def profile():
+    if request.method == "GET":
+        return jsonify(AuthManager.get_current_user_profile()), 200
+    data = request.json
+    schema = UpdateProfile()
+    try:
+        data = schema.load(data)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+    AuthManager.update_user_profile(data)
+    return jsonify(status="success"), 200
 
 # @auth_router.route('/change_password', methods=['PUT'])
 # @jwt_required()

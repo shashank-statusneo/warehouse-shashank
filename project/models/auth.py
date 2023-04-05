@@ -13,6 +13,7 @@ class User(db.Model):
     last_name = db.Column(db.String(100), nullable=True)
     gender = db.Column(db.String(100), nullable=True)
     address = db.Column(db.String(100), nullable=True)
+    mobile_number = db.Column(db.String(100), nullable=True)
     created_on = db.Column(db.DateTime, default=datetime.now())
     updated_on = db.Column(db.DateTime, default=datetime.now())
 

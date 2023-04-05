@@ -21,3 +21,11 @@ class LogInSchema(Schema):
     def validate_at_least_one_email_and_username(self, data, **kwargs):
         if not data.get("email") and not data.get("username"):
             raise ValidationError("At least one param is required from ['email', 'username']")
+
+
+class UpdateProfile(Schema):
+    first_name = fields.String()
+    last_name = fields.String()
+    address = fields.String()
+    gender = fields.String()
+    mobile_number = fields.String()
