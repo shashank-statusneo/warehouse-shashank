@@ -26,6 +26,12 @@ class LogInSchema(Schema):
 class UpdateProfile(Schema):
     first_name = fields.String()
     last_name = fields.String()
-    address = fields.String()
-    gender = fields.String()
+    department = fields.String()
+    function = fields.String()
+    role = fields.String()
     mobile_number = fields.String()
+
+
+class UpdatePassword(Schema):
+    old_password = fields.String(required=True)
+    new_password = fields.String(required=True, validate=Length(min=8))

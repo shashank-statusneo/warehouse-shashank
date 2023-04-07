@@ -1,4 +1,5 @@
 import settings
+from flask import jsonify
 
 from project.models.auth import User
 from flask_jwt_extended import (
@@ -7,7 +8,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 from project import db
-from project.utils import update_model_object, remove_unwanted_keys
+from project.utils import update_model_object
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -29,8 +30,9 @@ class AuthManager:
             "last_name": user.last_name,
             "email": user.email,
             "username": user.username,
-            "gender": user.gender,
-            "address": user.address,
+            "department": user.department,
+            "function": user.function,
+            "role": user.role,
             "mobile_number": user.mobile_number
         }
 
@@ -56,6 +58,17 @@ class AuthManager:
         user = User.query.filter_by(id=identity["user_id"]).first()
         update_model_object(user, user_data)
         db.session.commit()
+
+    @classmethod
+    def update_user_password(cls, update_password_data=dict):
+        user = cls.get_current_user()
+        if check_password_hash(user.password, update_password_data['old_password']):
+            if check_password_hash(user.password, update_password_data['new_password']):
+                return jsonify(error="new password can not same as old password"), 403
+            user.password = generate_password_hash(update_password_data['new_password'])
+            db.session.commit()
+            return jsonify({"status": "success"}), 200
+        return jsonify(error='Old password is invalid'), 403
 
     @classmethod
     def get_token(cls, login_data):

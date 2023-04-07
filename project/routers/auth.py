@@ -1,6 +1,6 @@
 import settings
 from project import db, jwt
-from project.schema_validators.auth import SignUpSchema, LogInSchema, UpdateProfile
+from project.schema_validators.auth import SignUpSchema, LogInSchema, UpdateProfile, UpdatePassword
 from flask import Blueprint
 from project.models.auth import User, TokenBlocklist
 
@@ -76,25 +76,18 @@ def profile():
     AuthManager.update_user_profile(data)
     return jsonify(status="success"), 200
 
-# @auth_router.route('/change_password', methods=['PUT'])
-# @jwt_required()
-# def change_password():
-#     data = request.json
-#     schema = UpdatePassword()
-#     try:
-#         data = schema.load(data)
-#     except ValidationError as err:
-#         return jsonify(err.messages), 400
-#
-#     user = get_user()
-#     if check_password_hash(user.password, data['old_password']):
-#         if check_password_hash(user.password, data['new_password']):
-#             return make_response('new password can not same as old password', 403)
-#         user.password = generate_password_hash(data['new_password'])
-#         db.session.commit()
-#         return jsonify({"status": "success"}), 200
-#     return make_response('Old password is invalid', 403)
-#
+
+@auth_router.route('/change_password', methods=['PUT'])
+@jwt_required()
+def change_password():
+    data = request.json
+    schema = UpdatePassword()
+    try:
+        data = schema.load(data)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    return AuthManager.update_user_password(data)
+
 
 @auth_router.route("/logout", methods=["DELETE"])
 @jwt_required(verify_type=False)
