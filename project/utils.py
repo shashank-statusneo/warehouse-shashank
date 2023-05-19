@@ -1,6 +1,5 @@
 from copy import deepcopy
 from datetime import date, datetime
-from flask_jwt_extended import get_jwt_identity
 
 
 def update_model_object(model, values_obj):
