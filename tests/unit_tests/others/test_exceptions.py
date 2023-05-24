@@ -1,15 +1,15 @@
 from werkzeug.exceptions import HTTPException
 
-from main import (
-    handle_exception,
-    handle_record_not_found_error,
-    handle_unauthorized_user_error,
-    handle_validation_error,
-)
 from main.exceptions.errors import (
     CustomValidationError,
     RecordNotFoundError,
     UnauthorizedUserError,
+)
+from main.exceptions.handlers import (
+    handle_exception,
+    handle_record_not_found_error,
+    handle_unauthorized_user_error,
+    handle_validation_error,
 )
 
 

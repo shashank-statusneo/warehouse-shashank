@@ -19,7 +19,7 @@ def test_create_new_user(app, mocker):
         user_data = {"email": "test1@example.com", "username": "test1", "password": "testpassword", "role": "user"}
 
         # Replace generate_password_hash with a mock
-        mock_generate_password_hash = mocker.patch("src.main.modules.auth.controller.generate_password_hash")
+        mock_generate_password_hash = mocker.patch("main.modules.auth.controller.generate_password_hash")
         mock_generate_password_hash.return_value = "test_hash_password"
 
         # Call create_new_user and check the result
@@ -50,7 +50,7 @@ def test_update_user_password(app, mocker):
     user, headers = get_user_and_headers(app)
     with app.test_request_context(headers=headers):
         verify_jwt_in_request()
-        mock_generate_password_hash = mocker.patch("src.main.modules.auth.controller.check_password_hash")
+        mock_generate_password_hash = mocker.patch("main.modules.auth.controller.check_password_hash")
         mock_generate_password_hash.side_effect = [True, False]
 
         update_password_data = get_update_password_data()

@@ -11,7 +11,6 @@ class SignUpSchema(Schema):
     last_name = fields.String()
     username = fields.String(required=True)
     email = fields.Email(required=True)
-    # role = fields.String(required=True, validate=OneOf(["user", "admin"]))
     password = fields.String(required=True, validate=Length(min=8))
 
 

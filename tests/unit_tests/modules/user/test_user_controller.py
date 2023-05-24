@@ -1,8 +1,8 @@
 import pytest
 from flask_jwt_extended import create_access_token, verify_jwt_in_request
 
-from main import UserController
 from main.modules.auth.model import AuthUser
+from main.modules.user.controller import UserController
 
 USER_ROLE_ID = 1
 ADMIN_ROLE_ID = 2

@@ -1,7 +1,7 @@
 import pytest
 from marshmallow import ValidationError
 
-from main import LogInSchema, SignUpSchema, UpdatePassword
+from main.modules.auth.schema_validator import LogInSchema, SignUpSchema, UpdatePassword
 
 
 class TestAuthSchemaValidators:
@@ -14,7 +14,6 @@ class TestAuthSchemaValidators:
             "last_name": "test",
             "username": "testuser",
             "email": "test@example.com",
-            "role": "user",
             "password": "password",
         }
         result = schema.load(valid_data)

@@ -19,17 +19,18 @@ repos:
     rev: v1.2.3
     hooks:
       - id: flake8
-  # - repo: local
-  #   hooks:
-  #     - id: coverage
-  #       name: Unit tests and code coverage
-  #       entry: coverage
-  #       language: system
-  #       pass_filenames: false
-  #       args: ["run", "--source", "./", "-m", "pytest", "-v", "--cov=./src.main", "--cov-fail-under=100", "--cov-report=term-missing", "./tests/unit_tests"]
-  #     - id: coverage
-  #       name: Integration tests and code coverage
-  #       entry: coverage
-  #       language: system
-  #       pass_filenames: false
-  #       args: ["run", "--source", "./", "-m", "pytest", "-v", "--cov=./src.main/modules", "--cov-fail-under=100", "--cov-report=term-missing", "./tests/integration_tests"]
+
+  - repo: local
+    hooks:
+      - id: coverage
+        name: Unit tests and code coverage
+        entry: coverage
+        language: system
+        pass_filenames: false
+        args: ["run", "--source", "./", "-m", "pytest", "-v", "--cov=./main", "--cov-fail-under=100", "--cov-report=term-missing", "./tests/unit_tests"]
+      - id: coverage
+        name: Integration tests and code coverage
+        entry: coverage
+        language: system
+        pass_filenames: false
+        args: ["run", "--source", "./", "-m", "pytest", "-v", "--cov=./main/modules", "--cov-fail-under=100", "--cov-report=term-missing", "./tests/integration_tests"]

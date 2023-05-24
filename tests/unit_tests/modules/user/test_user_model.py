@@ -1,7 +1,7 @@
 import pytest
 
-from main import User
 from main.modules.auth.model import AuthUser
+from main.modules.user.model import User
 
 
 class TestAuthModel:

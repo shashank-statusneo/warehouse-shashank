@@ -1,8 +1,8 @@
 from flask import Response
 from flask_jwt_extended import create_access_token, verify_jwt_in_request
 
-from main import UserController
 from main.modules.auth.model import AuthUser
+from main.modules.user.controller import UserController
 from main.modules.user.view import Profile, Profiles, Profiles2
 
 USER_ROLE_ID = 1

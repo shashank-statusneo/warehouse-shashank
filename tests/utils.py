@@ -14,7 +14,7 @@ def get_user_role_signup_data() -> dict:
     This function is used to return user role signup data
     :return:
     """
-    return {"username": "testuser2", "email": "testuser2@xyz.com", "password": "testpassword", "role": "user"}
+    return {"username": "testuser2", "email": "testuser2@xyz.com", "password": "testpassword"}
 
 
 def get_admin_role_login_credentials() -> dict:

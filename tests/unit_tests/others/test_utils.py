@@ -2,17 +2,17 @@ import pytest
 from marshmallow import ValidationError
 from pytest import raises
 
-from main import (
+from main.db import db
+from main.modules.auth.controller import AuthUserController
+from main.modules.auth.model import AuthUser
+from main.utils import (
     CustomValidationError,
     FiltersDataSchema,
     access_logger,
-    db,
     get_data_from_request_or_raise_validation_error,
     get_query_including_filters,
     log_user_access,
 )
-from main.modules import Address
-from main.modules.auth.controller import AuthUserController
 
 
 @pytest.fixture(scope="function")
@@ -20,23 +20,23 @@ def add_fixtures(load_data_from_file, load_data_to_model_using_controller_from_f
     load_data_to_model_using_controller_from_file(
         AuthUserController.create_new_user, "unit_tests/fixtures/auth_users.json"
     )
-    load_data_from_file(Address, "unit_tests/fixtures/addresses.json")
+    # load_data_from_file(Address, "unit_tests/fixtures/addresses.json")
 
 
 def test_get_generalize_query(app, add_fixtures):
     with app.app_context():
         # Invalid eq input.
         filters_dict = {"eq": {"id": {"invalid_key": "invalid value"}}}
-        query = get_query_including_filters(db, Address, filters_dict)
+        query = get_query_including_filters(db, AuthUser, filters_dict)
         assert isinstance(query, ValidationError)
 
         # Invalid substr input.
         filters_dict = {"substr": {"type": "work"}}
-        query = get_query_including_filters(db, Address, filters_dict)
+        query = get_query_including_filters(db, AuthUser, filters_dict)
         assert isinstance(query, ValidationError)
 
         filters_dict = {"lt": {"created_at": "20222-10-10", "id": []}}  # Invalid Date  # Invalid type
-        query = get_query_including_filters(db, Address, filters_dict)
+        query = get_query_including_filters(db, AuthUser, filters_dict)
         assert isinstance(query, ValidationError)
 
         filters_dict = {
@@ -51,7 +51,7 @@ def test_get_generalize_query(app, add_fixtures):
             "gte": {"id": 1},
             "between": {"id": [0, 3]},
         }
-        query = get_query_including_filters(db, Address, filters_dict)
+        query = get_query_including_filters(db, AuthUser, filters_dict)
         results = query.all()
         assert results is not None
         assert len(results) != 0

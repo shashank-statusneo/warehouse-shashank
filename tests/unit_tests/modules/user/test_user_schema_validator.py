@@ -1,7 +1,7 @@
 import pytest
 from marshmallow import ValidationError
 
-from main import UpdateProfile
+from main.modules.user.schema_validator import UpdateProfile
 
 
 class TestUpdateProfileSchemaValidators:

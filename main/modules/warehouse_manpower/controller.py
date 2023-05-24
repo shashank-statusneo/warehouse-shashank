@@ -16,12 +16,16 @@ from main.modules.warehouse_manpower.model import (
 
 class WarehouseController:
     """
-    This is the controller class which is used to handle all the logical and CURD operations of warehouse
-    manpower planner.
+    This is the controller class which is used to handle all the logical and CURD operations of warehouse.
     """
 
     @classmethod
     def add_warehouses(cls, warehouses_data: dict) -> tuple[list, list]:
+        """
+        Function to add new warehouses
+        :param warehouses_data:
+        :return:
+        """
         new_warehouses_with_ids = []
         error_data = []
         for warehouse in warehouses_data:
@@ -37,17 +41,31 @@ class WarehouseController:
 
     @classmethod
     def get_warehouses(cls) -> list:
+        """
+        Function to get list of warehouses.
+        :return:
+        """
         warehouses = Warehouse.query.all()
         return [warehouse.serialize() for warehouse in warehouses]
 
     @classmethod
     def get_warehouse_by_id(cls, warehouse_id: int):
+        """
+        Function to get warehouse by id.
+        :param warehouse_id:
+        :return:
+        """
         return Warehouse.query.filter_by(id=warehouse_id).first()
 
 
 class CategoryController:
     @classmethod
     def add_bulk_category(cls, category_data: dict) -> tuple[list, list]:
+        """
+        Function to add multiple category at a time.
+        :param category_data:
+        :return:
+        """
         new_category_with_ids = []
         error_data = []
         for category in category_data:
@@ -64,15 +82,24 @@ class CategoryController:
 
     @classmethod
     def get_categories(cls) -> list:
+        """
+        Function to get the list of categories.
+        :return:
+        """
         categories = Category.query.all()
         return [category.serialize() for category in categories]
 
     @classmethod
     def get_category_by_id(cls, category_id: int):
+        """
+        Function to get category by id.
+        :param category_id:
+        :return:
+        """
         return Category.query.filter_by(id=category_id).first()
 
     @classmethod
-    def convert_excel_file_data_according_category(cls, data):
+    def convert_excel_file_data_according_category(cls, data: list):
         category_data, error_data = [], []
         for record in data:
             try:
