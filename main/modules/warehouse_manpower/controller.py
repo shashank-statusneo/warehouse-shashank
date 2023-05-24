@@ -20,7 +20,7 @@ class WarehouseController:
     """
 
     @classmethod
-    def add_warehouses(cls, warehouses_data: dict) -> tuple[list, list]:
+    def add_warehouses(cls, warehouses_data: list) -> tuple[list, list]:
         """
         Function to add new warehouses
         :param warehouses_data:
@@ -34,6 +34,7 @@ class WarehouseController:
             except Exception as e:
                 warehouse["error"] = str(e)
                 error_data.append(warehouse)
+                Warehouse.rollback()
                 continue
             warehouse.update({"id": new_warehouse.id})
             new_warehouses_with_ids.append(warehouse)
@@ -60,7 +61,7 @@ class WarehouseController:
 
 class CategoryController:
     @classmethod
-    def add_bulk_category(cls, category_data: dict) -> tuple[list, list]:
+    def add_bulk_category(cls, category_data: list) -> tuple[list, list]:
         """
         Function to add multiple category at a time.
         :param category_data:
@@ -99,7 +100,12 @@ class CategoryController:
         return Category.query.filter_by(id=category_id).first()
 
     @classmethod
-    def convert_excel_file_data_according_category(cls, data: list):
+    def convert_excel_file_data_according_category(cls, data: list) -> (list, list):
+        """
+        Function to check if excel file data is valid or not and convert it according to category requirement.
+        :param data:
+        :return:
+        """
         category_data, error_data = [], []
         for record in data:
             try:
@@ -121,7 +127,12 @@ class CategoryController:
         return category_data, error_data
 
     @staticmethod
-    def check_invalid_categories(categories: list):
+    def check_invalid_categories(categories: list) -> list:
+        """
+        Function to check and return a list of invalid categories.
+        :param categories:
+        :return:
+        """
         return [
             category_name for category_name in categories if category_name not in Category.category_name_to_id_mapping()
         ]
@@ -130,6 +141,11 @@ class CategoryController:
 class BenchmarkProductivityController:
     @classmethod
     def add_bulk_benchmark_productivity(cls, benchmark_productivity: list) -> tuple[list, list]:
+        """
+        Function to add benchmark productivity.
+        :param benchmark_productivity:
+        :return:
+        """
         new_productivity_with_ids = []
         error_data = []
         for productivity in benchmark_productivity:
@@ -151,6 +167,11 @@ class BenchmarkProductivityController:
 
     @classmethod
     def update_benchmark_productivity(cls, list_of_updated_productivity: list):
+        """
+        Function to update benchmark productivity.
+        :param list_of_updated_productivity:
+        :return:
+        """
         for new_benchmark_productivity in list_of_updated_productivity:
             old_benchmark_productivity = BenchmarkProductivity.query.filter_by(
                 id=new_benchmark_productivity["id"]
@@ -160,11 +181,22 @@ class BenchmarkProductivityController:
 
     @classmethod
     def get_benchmark_productivity_by_warehouse_id(cls, warehouse_id: int) -> list[dict] or None:
+        """
+        Function to get all benchmark productivity of a warehouse.
+        :param warehouse_id:
+        :return:
+        """
         records = BenchmarkProductivity.query.filter_by(warehouse_id=warehouse_id)
         return [record.serialize() for record in records]
 
     @classmethod
-    def add_benchmark_category_from_excel_file_data(cls, file_data, warehouse_id):
+    def add_benchmark_category_from_excel_file_data(cls, file_data: list, warehouse_id: int):
+        """
+        Function to get the benchmark category from an excel file.
+        :param file_data:
+        :param warehouse_id:
+        :return:
+        """
         category_name_to_id_mapping = Category.category_name_to_id_mapping()
 
         benchmark_productivity_data = [
@@ -182,6 +214,11 @@ class BenchmarkProductivityController:
 class DemandController:
     @classmethod
     def add_demand_in_bulk(cls, demand_data: dict) -> tuple[list, list]:
+        """
+        Function to add demands.
+        :param demand_data:
+        :return:
+        """
         new_demand_with_ids = []
         error_data = []
         for demand in demand_data:
@@ -202,7 +239,14 @@ class DemandController:
         return new_demand_with_ids, error_data
 
     @classmethod
-    def get_demands_by_warehouse_id(cls, warehouse_id, start_date, end_date):
+    def get_demands_by_warehouse_id(cls, warehouse_id: int, start_date: type, end_date: type):
+        """
+        Function to get demands of a warehouse between a date range.
+        :param warehouse_id:
+        :param start_date:
+        :param end_date:
+        :return:
+        """
         records = (
             db.session.query(InputDemand, Category)
             .join(Category, Category.id == InputDemand.category_id)
@@ -210,12 +254,15 @@ class DemandController:
             .filter(InputDemand.date <= end_date)
             .filter(InputDemand.warehouse_id == warehouse_id)
         )
-        if records:
-            return cls.create_input_demands_data(records)
-        return None
+        return cls.create_input_demands_data(records) if records else None
 
     @classmethod
     def update_demand(cls, update_demand_data: list):
+        """
+        Function to update demands value.
+        :param update_demand_data:
+        :return:
+        """
         for updated_demand in update_demand_data:
             old_demand = InputDemand.query.filter_by(id=updated_demand["id"]).first()
 
@@ -223,7 +270,12 @@ class DemandController:
                 old_demand.update(updated_demand)
 
     @staticmethod
-    def create_input_demands_data(records):
+    def create_input_demands_data(records) -> dict:
+        """
+        Function to create input demands data.
+        :param records:
+        :return:
+        """
         output = {"total": {}}
         for record in records:
             str_date = str(record.InputDemand.date)
@@ -244,7 +296,17 @@ class DemandController:
         return output
 
     @classmethod
-    def check_and_convert_excel_data_according_to_input_demand(cls, start_date, end_date, data, warehouse_id):
+    def check_and_convert_excel_data_according_to_input_demand(
+        cls, start_date, end_date, data: list, warehouse_id: int
+    ):
+        """
+        Function to check demand file and convert file data.
+        :param start_date:
+        :param end_date:
+        :param data:
+        :param warehouse_id:
+        :return:
+        """
         category_name_to_id_mapping = Category.category_name_to_id_mapping()
         error_data, output_data = [], []
         start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
@@ -339,7 +401,12 @@ class ResultController:
         return None
 
     @classmethod
-    def calculate_manpower(cls, requirement_data):
+    def calculate_manpower(cls, requirement_data: dict) -> dict:
+        """
+        Function to calculate manpower.
+        :param requirement_data:
+        :return:
+        """
         new_requirement = RequirementController.add_requirement(requirement_data)
         expected_demand = DemandController.get_demands_by_warehouse_id(
             new_requirement.warehouse_id, new_requirement.plan_from_date, new_requirement.plan_to_date

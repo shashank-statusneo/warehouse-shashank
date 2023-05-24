@@ -31,7 +31,7 @@ class Warehouses(Resource):
     def post(self):
         data = get_data_from_request_or_raise_validation_error(BulkWarehouseValidator, request.json)
         created_warehouses, error_data = WarehouseController.add_warehouses(data["warehouses"])
-        return make_response(jsonify(warehouses=created_warehouses, error_data=error_data), 200)
+        return make_response(jsonify(warehouses=created_warehouses, error_data=error_data), 201)
 
 
 class WarehouseBenchmarkProductivity(Resource):
