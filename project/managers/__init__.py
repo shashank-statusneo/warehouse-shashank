@@ -1,7 +1,0 @@
-from project.managers.benchmark_productivity import BenchmarkProductivityManager
-from project.managers.input_demand import DemandManager
-from project.managers.input_requirement import RequirementManager
-from project.managers.result import ResultManager
-from project.managers.warehouse import WarehouseManager, CategoryManager
-from project.managers.calculate_manpower import WarehouseManpowerPlanner
-from project.managers.auth import AuthManager
