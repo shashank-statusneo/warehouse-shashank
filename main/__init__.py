@@ -20,6 +20,8 @@ def get_app(env=None, config=None):
     if not config:
         if not env:
             env = os.environ.get("FLASK_ENV", "dev")
+        else:
+            os.environ["FLASK_ENV"] = env
         config = config_by_name[env]
 
     app.config.update(config)

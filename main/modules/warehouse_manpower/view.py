@@ -59,7 +59,7 @@ class WarehouseDemands(Resource):
     def get(self, warehouse_id: int):
         start_date, end_date = request.args.get("start_date"), request.args.get("end_date")
         if not start_date or not end_date:
-            return make_response(jsonify(msg="start_date and end_date are required parameters"), 400)
+            return make_response(jsonify(error="start_date and end_date are required parameters"), 400)
         demands = DemandController.get_demands_by_warehouse_id(warehouse_id, start_date, end_date)
         return make_response(jsonify(demands), 200)
 
@@ -160,6 +160,8 @@ class DemandFile(Resource):
         DemandController.add_demand_in_bulk(converted_data)
         return make_response(jsonify(status="success"), 201)
 
+
+#  wmp = warehouse manpower planner
 
 wmp_namespace = Namespace("wmp", description="Address Operations")
 wmp_namespace.add_resource(Warehouses, "/warehouses")

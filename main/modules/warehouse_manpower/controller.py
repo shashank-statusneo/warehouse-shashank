@@ -247,6 +247,7 @@ class DemandController:
         :param end_date:
         :return:
         """
+
         records = (
             db.session.query(InputDemand, Category)
             .join(Category, Category.id == InputDemand.category_id)
