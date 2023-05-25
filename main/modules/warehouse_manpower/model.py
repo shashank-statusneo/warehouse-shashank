@@ -2,6 +2,10 @@ from main.db import BaseModel, db
 
 
 class Warehouse(BaseModel):
+    """
+    Model for Warehouse
+    """
+
     __tablename__ = "warehouse"
 
     name = db.Column(db.String(100), unique=True, nullable=False)
@@ -9,6 +13,10 @@ class Warehouse(BaseModel):
 
 
 class Category(BaseModel):
+    """
+    Model for Category
+    """
+
     __tablename__ = "category"
 
     name = db.Column(db.String(100), unique=True)
