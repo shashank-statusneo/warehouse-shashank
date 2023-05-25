@@ -24,6 +24,10 @@ class Category(BaseModel):
 
     @classmethod
     def category_id_to_name_mapping(cls):
+        """
+        Category id to name mapping
+        :return:
+        """
         return {record.id: record.name for record in Category.query.all()}
 
     @classmethod
