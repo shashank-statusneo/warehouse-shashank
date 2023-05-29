@@ -8,7 +8,7 @@ from yaml.loader import Loader
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-dotenv_path = os.path.join(os.path.expanduser("~"), "warehouse.env")
+dotenv_path = os.path.join(os.path.dirname(basedir), ".env")
 load_dotenv(dotenv_path)
 
 env = os.getenv("FLASK_ENV") or "dev"

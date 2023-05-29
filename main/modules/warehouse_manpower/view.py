@@ -109,11 +109,11 @@ class ProductivityFile(Resource):
 
         data = df.to_json(orient="records")
         data = json.loads(data)
-        category_data, error = CategoryController.convert_excel_file_data_according_category(data)
+        category_data, error = CategoryController.convert_excel_file_data_according_to_category(data)
         if error:
             return make_response(jsonify(error=error), 400)
 
-        CategoryController.add_bulk_category(category_data)
+        CategoryController.add_categories(category_data)
         BenchmarkProductivityController.add_benchmark_category_from_excel_file_data(data, warehouse_id)
 
         return make_response(jsonify(status="success"), 201)
@@ -157,7 +157,7 @@ class DemandFile(Resource):
         )
         if error:
             return make_response(jsonify(error=error), 400)
-        DemandController.add_demand_in_bulk(converted_data)
+        DemandController.add_demands(converted_data)
         return make_response(jsonify(status="success"), 201)
 
 

@@ -40,6 +40,9 @@ class Category(BaseModel):
 
 
 class BenchmarkProductivity(BaseModel):
+    """
+    Benchmark Productivity Model
+    """
     __tablename__ = "input_benchmark_productivity"
 
     warehouse_id = db.Column(db.ForeignKey("warehouse.id"), nullable=False)
@@ -65,6 +68,9 @@ class BenchmarkProductivity(BaseModel):
 
 
 class InputDemand(BaseModel):
+    """
+    Input Demand Model
+    """
     __tablename__ = "input_demand"
 
     warehouse_id = db.Column(db.ForeignKey("warehouse.id"))
@@ -79,6 +85,9 @@ class InputDemand(BaseModel):
 
 
 class InputRequirements(BaseModel):
+    """
+    Input Requirement Model.
+    """
     __tablename__ = "input_requirements"
 
     warehouse_id = db.Column(db.ForeignKey("warehouse.id"))
@@ -92,16 +101,3 @@ class InputRequirements(BaseModel):
     created_by = db.Column(db.ForeignKey("auth_user.id"))
     updated_by = db.Column(db.ForeignKey("auth_user.id"), default=None)
     soft_delete_flag = db.Column(db.Integer)
-
-
-class ManpowerPlanningResult(BaseModel):
-    __tablename__ = "result_manpower_planning_overall"
-
-    requirement_id = db.Column(db.ForeignKey("input_requirements.id"))
-    date = db.Column(db.Date, nullable=False)
-    category_id = db.Column(db.ForeignKey("category.id"), nullable=False)
-    num_existing_to_be_deployed = db.Column(db.Integer, nullable=False)
-    num_new_to_be_deployed = db.Column(db.Integer, nullable=False)
-    created_by = db.Column(db.ForeignKey("auth_user.id"))
-
-    __table_args__ = (db.UniqueConstraint(requirement_id, category_id),)

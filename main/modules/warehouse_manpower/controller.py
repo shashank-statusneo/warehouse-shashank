@@ -8,7 +8,6 @@ from main.modules.warehouse_manpower.model import (
     Category,
     InputDemand,
     InputRequirements,
-    ManpowerPlanningResult,
     Warehouse,
     db,
 )
@@ -20,9 +19,9 @@ class WarehouseController:
     """
 
     @classmethod
-    def add_warehouses(cls, warehouses_data: list) -> tuple[list, list]:
+    def add_warehouses(cls, warehouses_data: list) -> (list, list):
         """
-        Function to add new warehouses
+        Add new warehouses in the db
         :param warehouses_data:
         :return:
         """
@@ -43,7 +42,7 @@ class WarehouseController:
     @classmethod
     def get_warehouses(cls) -> list:
         """
-        Function to get list of warehouses.
+        Get list of warehouses.
         :return:
         """
         warehouses = Warehouse.query.all()
@@ -52,7 +51,7 @@ class WarehouseController:
     @classmethod
     def get_warehouse_by_id(cls, warehouse_id: int):
         """
-        Function to get warehouse by id.
+        Get warehouse by warehouse_id.
         :param warehouse_id:
         :return:
         """
@@ -61,15 +60,15 @@ class WarehouseController:
 
 class CategoryController:
     @classmethod
-    def add_bulk_category(cls, category_data: list) -> tuple[list, list]:
+    def add_categories(cls, categories_data: list) -> tuple[list, list]:
         """
-        Function to add multiple category at a time.
+        Add categories to the db.
         :param category_data:
         :return:
         """
         new_category_with_ids = []
         error_data = []
-        for category in category_data:
+        for category in categories_data:
             try:
                 new_category = Category.create(category)
             except Exception as e:
@@ -84,7 +83,7 @@ class CategoryController:
     @classmethod
     def get_categories(cls) -> list:
         """
-        Function to get the list of categories.
+        Get the list of categories.
         :return:
         """
         categories = Category.query.all()
@@ -93,16 +92,16 @@ class CategoryController:
     @classmethod
     def get_category_by_id(cls, category_id: int):
         """
-        Function to get category by id.
+        Get category by category_id.
         :param category_id:
         :return:
         """
         return Category.query.filter_by(id=category_id).first()
 
     @classmethod
-    def convert_excel_file_data_according_category(cls, data: list) -> (list, list):
+    def convert_excel_file_data_according_to_category(cls, data: list) -> (list, list):
         """
-        Function to check if excel file data is valid or not and convert it according to category requirement.
+        Validate file data and convert it according to category requirement.
         :param data:
         :return:
         """
@@ -129,7 +128,7 @@ class CategoryController:
     @staticmethod
     def check_invalid_categories(categories: list) -> list:
         """
-        Function to check and return a list of invalid categories.
+        Check invalid categories from input list
         :param categories:
         :return:
         """
@@ -140,7 +139,7 @@ class CategoryController:
 
 class BenchmarkProductivityController:
     @classmethod
-    def add_bulk_benchmark_productivity(cls, benchmark_productivity: list) -> tuple[list, list]:
+    def add_benchmark_productivity(cls, benchmark_productivity: list) -> (list, list):
         """
         Function to add benchmark productivity.
         :param benchmark_productivity:
@@ -168,7 +167,7 @@ class BenchmarkProductivityController:
     @classmethod
     def update_benchmark_productivity(cls, list_of_updated_productivity: list):
         """
-        Function to update benchmark productivity.
+        Update benchmark productivity from the list of updated benchmark productivity.
         :param list_of_updated_productivity:
         :return:
         """
@@ -182,7 +181,7 @@ class BenchmarkProductivityController:
     @classmethod
     def get_benchmark_productivity_by_warehouse_id(cls, warehouse_id: int) -> list[dict] or None:
         """
-        Function to get all benchmark productivity of a warehouse.
+        Get all benchmark productivity of a warehouse.
         :param warehouse_id:
         :return:
         """
@@ -208,12 +207,12 @@ class BenchmarkProductivityController:
             }
             for record in file_data
         ]
-        return cls.add_bulk_benchmark_productivity(benchmark_productivity_data)
+        return cls.add_benchmark_productivity(benchmark_productivity_data)
 
 
 class DemandController:
     @classmethod
-    def add_demand_in_bulk(cls, demand_data: dict) -> tuple[list, list]:
+    def add_demands(cls, demand_data: list) -> tuple[list, list]:
         """
         Function to add demands.
         :param demand_data:
@@ -241,7 +240,7 @@ class DemandController:
     @classmethod
     def get_demands_by_warehouse_id(cls, warehouse_id: int, start_date: type, end_date: type):
         """
-        Function to get demands of a warehouse between a date range.
+        Get demands of a warehouse between a date range.
         :param warehouse_id:
         :param start_date:
         :param end_date:
@@ -260,7 +259,7 @@ class DemandController:
     @classmethod
     def update_demand(cls, update_demand_data: list):
         """
-        Function to update demands value.
+        Update demands value from the updated list.
         :param update_demand_data:
         :return:
         """
@@ -301,7 +300,7 @@ class DemandController:
         cls, start_date, end_date, data: list, warehouse_id: int
     ):
         """
-        Function to check demand file and convert file data.
+        To validate and convert demand file data.
         :param start_date:
         :param end_date:
         :param data:
@@ -358,48 +357,27 @@ class DemandController:
 
 class RequirementController:
     @classmethod
-    def add_requirement(cls, requirement_data):
+    def add_requirement(cls, requirement_data: dict):
+        """
+        Add input requirement data.
+        :param requirement_data:
+        :return:
+        """
         new_requirement = InputRequirements.create(requirement_data)
         return new_requirement
 
     @classmethod
     def get_requirements(cls, warehouse_id: int):
+        """
+        Get previous input requirements of warehouse.
+        :param warehouse_id:
+        :return:
+        """
         records = InputRequirements.query.filter_by(warehouse_id=warehouse_id)
         return [record.serialize() for record in records]
 
 
 class ResultController:
-    @classmethod
-    def add_bulk_results(cls, requirement_id: int, result_data: dict):
-        category_name_to_id_mapping = Category.category_name_to_id_mapping()
-
-        for date in result_data:
-            if date in ["total", "additional_data"]:
-                continue
-            new_data = {"requirement_id": requirement_id, "date": datetime.strptime(date, "%Y-%m-%d").date()}
-
-            for category in result_data[date]:
-                new_data["num_existing_to_be_deployed"] = result_data[date][category]["num_of_existing_to_deploy"]
-                new_data["num_new_to_be_deployed"] = result_data[date][category]["num_of_new_to_deploy"]
-                new_data["category_id"] = category_name_to_id_mapping[category]
-                ManpowerPlanningResult.create(new_data)
-
-    @classmethod
-    def get_results_by_requirement_id(cls, requirement_id: int) -> list[dict] or None:
-        records = ManpowerPlanningResult.query.filter_by(requirement_id=requirement_id)
-        if records:
-            return [
-                {
-                    "id": record.id,
-                    "date": record.date,
-                    "category_name": Category.get_category_by_id(record.category_id).name,
-                    "num_existing_to_be_deployed": record.num_existing_to_be_deployed,
-                    "num_new_to_be_deployed": record.num_new_to_be_deployed,
-                    "created_on": record.created_on,
-                }
-                for record in records
-            ]
-        return None
 
     @classmethod
     def calculate_manpower(cls, requirement_data: dict) -> dict:
@@ -412,7 +390,6 @@ class ResultController:
         expected_demand = DemandController.get_demands_by_warehouse_id(
             new_requirement.warehouse_id, new_requirement.plan_from_date, new_requirement.plan_to_date
         )
-
         productivity = BenchmarkProductivityController.get_benchmark_productivity_by_warehouse_id(
             new_requirement.warehouse_id
         )
@@ -421,7 +398,6 @@ class ResultController:
         requirement_data["productivity"] = productivity
 
         result = cls.get_dummy_output(requirement_data)
-        # ResultController.add_bulk_results(new_requirement.id, result)  # uncomment this if want to store result.
 
         additional_data = {
             "project_fulfillment": randint(80, 96),
@@ -437,7 +413,12 @@ class ResultController:
         }
 
     @staticmethod
-    def get_dummy_output(requirement_data):
+    def get_dummy_output(requirement_data: dict) -> dict:
+        """
+        To get dummy output data until algorithm is not merged.
+        :param requirement_data:
+        :return:
+        """
         category_name_to_id_mapping = Category.category_name_to_id_mapping()
         dummy_output = {}
         for date in requirement_data["expected_demand"]:
@@ -460,7 +441,12 @@ class ResultController:
         return dummy_output
 
     @staticmethod
-    def get_demand_vs_fulfillment_dummy_data(requirement_data):
+    def get_demand_vs_fulfillment_dummy_data(requirement_data: dict) -> dict:
+        """
+        To get dummy demand vs fulfillment data until algorithm is not merged.
+        :param requirement_data:
+        :return:
+        """
         category_name_to_id_mapping = Category.category_name_to_id_mapping()
         dummy_output = {}
         for date in requirement_data["expected_demand"]:
