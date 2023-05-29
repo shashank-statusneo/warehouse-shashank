@@ -66,7 +66,7 @@ class AuthUserController:
         return {}, "Old password is invalid"
 
     @classmethod
-    def get_token(cls, login_data: dict) -> [dict, str]:
+    def get_token(cls, login_data: dict) -> (dict, str):
         """
         This function is used to get the token using email or username and password. It returns
         access_token and refresh_token.
