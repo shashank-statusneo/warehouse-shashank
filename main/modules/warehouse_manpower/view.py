@@ -22,7 +22,7 @@ from main.utils import get_data_from_request_or_raise_validation_error
 
 
 class Warehouses(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def get(self):
         warehouses = WarehouseController.get_warehouses()
@@ -35,7 +35,7 @@ class Warehouses(Resource):
 
 
 class WarehouseBenchmarkProductivity(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def get(self, warehouse_id: int):
         benchmark_productivity = BenchmarkProductivityController.get_benchmark_productivity_by_warehouse_id(
@@ -45,7 +45,7 @@ class WarehouseBenchmarkProductivity(Resource):
 
 
 class BenchmarkProductivity(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def put(self):
         data = get_data_from_request_or_raise_validation_error(UpdateBenchmarkProductivityValidator, request.json)
@@ -54,7 +54,7 @@ class BenchmarkProductivity(Resource):
 
 
 class WarehouseDemands(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def get(self, warehouse_id: int):
         start_date, end_date = request.args.get("start_date"), request.args.get("end_date")
@@ -65,7 +65,7 @@ class WarehouseDemands(Resource):
 
 
 class Demands(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def put(self):
         data = get_data_from_request_or_raise_validation_error(UpdateDemandValidator, request.json)
@@ -74,7 +74,7 @@ class Demands(Resource):
 
 
 class CalculateManpower(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def post(self):
         data = get_data_from_request_or_raise_validation_error(RequirementValidator, request.json)
@@ -83,7 +83,7 @@ class CalculateManpower(Resource):
 
 
 class ProductivityFile(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def post(self, warehouse_id: int):
         warehouse_id = int(warehouse_id)
@@ -120,7 +120,7 @@ class ProductivityFile(Resource):
 
 
 class DemandFile(Resource):
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def post(self, warehouse_id: int):
         if not WarehouseController.get_warehouse_by_id(warehouse_id):
