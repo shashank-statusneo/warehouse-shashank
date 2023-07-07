@@ -276,8 +276,8 @@ class DemandController:
         :param records:
         :return:
         """
-        # output = {"total": {}}
-        output = {}
+        output = {"total": {}}
+        # output = {}
         for record in records:
             str_date = str(record.InputDemand.date)
             if str_date not in output:
@@ -290,9 +290,9 @@ class DemandController:
                 "category_id": record.Category.id,
                 "updated_on": record.InputDemand.updated_at,
             }
-            # output[str_date]["total"] = output[str_date].get("total", 0) + record.InputDemand.demand
-            # output["total"][category_name] = output["total"].get(category_name, 0) + record.InputDemand.demand
-            # output["total"]["total"] = output["total"].get("total", 0) + record.InputDemand.demand
+            output[str_date]["total"] = output[str_date].get("total", 0) + record.InputDemand.demand
+            output["total"][category_name] = output["total"].get(category_name, 0) + record.InputDemand.demand
+            output["total"]["total"] = output["total"].get("total", 0) + record.InputDemand.demand
 
         return output
 
